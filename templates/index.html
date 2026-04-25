@@ -2,1145 +2,1145 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>AutomatonAI — Crocs Order Bot</title>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+ <title>AutomatonAI — Crocs Order Bot</title>
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-      background: #f0f2f5;
-      color: #333;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      min-height: 100vh;
-    }
+ <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+   background: #f0f2f5;
+   color: #333;
+   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+   min-height: 100vh;
+  }
 
-    .layout { display: flex; min-height: 100vh; }
+  .layout { display: flex; min-height: 100vh; }
 
-    /* Sidebar */
-    .sidebar {
-      background: #001529;
-      color: #fff;
-      padding: 24px 0;
-      display: flex;
-      flex-direction: column;
-      width: 256px;
-      min-height: 100vh;
-      box-shadow: 2px 0 8px rgba(0,0,0,0.1);
-      z-index: 10;
-    }
+  /* Sidebar */
+  .sidebar {
+   background: #001529;
+   color: #fff;
+   padding: 24px 0;
+   display: flex;
+   flex-direction: column;
+   width: 256px;
+   min-height: 100vh;
+   box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+   z-index: 10;
+  }
 
-    .logo {
-      padding: 0 24px 24px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 24px;
-      text-align: center;
-    }
+  .logo {
+   padding: 0 24px 24px;
+   border-bottom: 1px solid rgba(255,255,255,0.1);
+   margin-bottom: 24px;
+   text-align: center;
+  }
 
-    .logo-mark { font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
-    .logo-sub { font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 4px; }
+  .logo-mark { font-size: 1.25rem; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+  .logo-sub { font-size: 0.75rem; color: rgba(255,255,255,0.45); margin-top: 4px; }
 
-    .nav-item {
-      display: flex;
-      align-items: center;
-      padding: 12px 24px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.65);
-      transition: all 0.2s;
-    }
+  .nav-item {
+   display: flex;
+   align-items: center;
+   padding: 12px 24px;
+   cursor: pointer;
+   font-size: 0.9rem;
+   color: rgba(255,255,255,0.65);
+   transition: all 0.2s;
+  }
 
-    .nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
-    .nav-item.active { color: #fff; background: #1890ff; font-weight: 600; }
+  .nav-item:hover { color: #fff; background: rgba(255,255,255,0.05); }
+  .nav-item.active { color: #fff; background: #1890ff; font-weight: 600; }
 
-    .sidebar-footer {
-      margin-top: auto;
-      padding: 24px;
-      border-top: 1px solid rgba(255,255,255,0.1);
-      font-size: 0.7rem;
-      color: rgba(255,255,255,0.3);
-    }
+  .sidebar-footer {
+   margin-top: auto;
+   padding: 24px;
+   border-top: 1px solid rgba(255,255,255,0.1);
+   font-size: 0.7rem;
+   color: rgba(255,255,255,0.3);
+  }
 
-    .api-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 8px;
-      padding: 4px 8px;
-      border-radius: 2px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .api-dot { width: 6px; height: 6px; border-radius: 50%; background: #ff4d4f; }
-    .api-dot.ok { background: #52c41a; }
+  .api-badge {
+   display: inline-flex;
+   align-items: center;
+   gap: 6px;
+   margin-top: 8px;
+   padding: 4px 8px;
+   border-radius: 2px;
+   background: rgba(255,255,255,0.05);
+   border: 1px solid rgba(255,255,255,0.1);
+  }
+  .api-dot { width: 6px; height: 6px; border-radius: 50%; background: #ff4d4f; }
+  .api-dot.ok { background: #52c41a; }
 
-    /* Main Content */
-    .main { padding: 40px; flex: 1; overflow-y: auto; }
-    .section { display: none; }
-    .section.active { display: block; }
+  /* Main Content */
+  .main { padding: 40px; flex: 1; overflow-y: auto; }
+  .section { display: none; }
+  .section.active { display: block; }
 
-    .page-header { margin-bottom: 32px; }
-    .page-title { font-size: 1.75rem; font-weight: 600; color: #001529; }
-    .page-sub { font-size: 0.9rem; color: #8c8c8c; margin-top: 4px; }
+  .page-header { margin-bottom: 32px; }
+  .page-title { font-size: 1.75rem; font-weight: 600; color: #001529; }
+  .page-sub { font-size: 0.9rem; color: #8c8c8c; margin-top: 4px; }
 
-    /* Dashboard Stats */
-    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px; }
-    .stat {
-      background: #fff;
-      padding: 24px;
-      border-radius: 8px;
-      border: 1px solid #f0f0f0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    }
-    .stat-val { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
-    .stat-val.green { color: #52c41a; }
-    .stat-val.blue { color: #1890ff; }
-    .stat-val.yellow { color: #faad14; }
-    .stat-val.purple { color: #722ed1; }
-    .stat-label { font-size: 0.85rem; color: #8c8c8c; margin-top: 8px; }
+  /* Dashboard Stats */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px; }
+  .stat {
+   background: #fff;
+   padding: 24px;
+   border-radius: 8px;
+   border: 1px solid #f0f0f0;
+   box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+  .stat-val { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
+  .stat-val.green { color: #52c41a; }
+  .stat-val.blue { color: #1890ff; }
+  .stat-val.yellow { color: #faad14; }
+  .stat-val.purple { color: #722ed1; }
+  .stat-label { font-size: 0.85rem; color: #8c8c8c; margin-top: 8px; }
 
-    /* Cards & Forms */
-    .call-card {
-      background: #fff;
-      border: 1px solid #f0f0f0;
-      border-radius: 8px;
-      padding: 32px;
-      max-width: 600px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-    }
-    .call-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 24px; color: #001529; }
+  /* Cards & Forms */
+  .call-card {
+   background: #fff;
+   border: 1px solid #f0f0f0;
+   border-radius: 8px;
+   padding: 32px;
+   max-width: 600px;
+   box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  }
+  .call-card h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 24px; color: #001529; }
 
-    .form-group { margin-bottom: 24px; }
-    .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: #262626; margin-bottom: 8px; }
-    .form-input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d9d9d9;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      outline: none;
-      transition: all 0.3s;
-    }
-    .form-input:focus { border-color: #40a9ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
+  .form-group { margin-bottom: 24px; }
+  .form-label { display: block; font-size: 0.85rem; font-weight: 600; color: #262626; margin-bottom: 8px; }
+  .form-input {
+   width: 100%;
+   padding: 10px 12px;
+   border: 1px solid #d9d9d9;
+   border-radius: 4px;
+   font-size: 0.9rem;
+   outline: none;
+   transition: all 0.3s;
+  }
+  .form-input:focus { border-color: #40a9ff; box-shadow: 0 0 0 2px rgba(24,144,255,0.2); }
 
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 20px;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s;
-      border: 1px solid transparent;
-    }
-    .btn-primary { background: #001529; color: #fff; border-color: #001529; }
-    .btn-primary:hover { background: #002140; border-color: #002140; }
-    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-    
-    .btn-secondary { background: #fff; color: #595959; border-color: #d9d9d9; }
-    .btn-secondary:hover { color: #40a9ff; border-color: #40a9ff; }
+  /* Buttons */
+  .btn {
+   display: inline-flex;
+   align-items: center;
+   justify-content: center;
+   padding: 10px 20px;
+   border-radius: 4px;
+   font-size: 0.9rem;
+   font-weight: 500;
+   cursor: pointer;
+   transition: all 0.3s;
+   border: 1px solid transparent;
+  }
+  .btn-primary { background: #001529; color: #fff; border-color: #001529; }
+  .btn-primary:hover { background: #002140; border-color: #002140; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  
+  .btn-secondary { background: #fff; color: #595959; border-color: #d9d9d9; }
+  .btn-secondary:hover { color: #40a9ff; border-color: #40a9ff; }
 
-    /* Qty Control */
-    .qty-btn {
-      width: 32px;
-      height: 32px;
-      border: 1px solid #d9d9d9;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      border-radius: 4px;
-      font-size: 1.2rem;
-    }
-    .qty-num { width: 40px; text-align: center; font-weight: 600; }
+  /* Qty Control */
+  .qty-btn {
+   width: 32px;
+   height: 32px;
+   border: 1px solid #d9d9d9;
+   background: #fff;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   cursor: pointer;
+   border-radius: 4px;
+   font-size: 1.2rem;
+  }
+  .qty-num { width: 40px; text-align: center; font-weight: 600; }
 
-    /* Status Badges */
-    .badge {
-      display: inline-flex;
-      padding: 2px 10px;
-      border-radius: 100px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      border: 1px solid transparent;
-    }
-    .badge.confirmed { background: #f6ffed; color: #52c41a; border-color: #b7eb8f; }
-    .badge.pending { background: #fff7e6; color: #faad14; border-color: #ffe58f; }
-    .badge.failed { background: #fff1f0; color: #f5222d; border-color: #ffa39e; }
+  /* Status Badges */
+  .badge {
+   display: inline-flex;
+   padding: 2px 10px;
+   border-radius: 100px;
+   font-size: 0.75rem;
+   font-weight: 500;
+   border: 1px solid transparent;
+  }
+  .badge.confirmed { background: #f6ffed; color: #52c41a; border-color: #b7eb8f; }
+  .badge.pending { background: #fff7e6; color: #faad14; border-color: #ffe58f; }
+  .badge.failed { background: #fff1f0; color: #f5222d; border-color: #ffa39e; }
 
-    /* Tables */
-    .table-wrap { background: #fff; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; }
-    th { padding: 16px; text-align: left; background: #fafafa; border-bottom: 1px solid #f0f0f0; font-size: 0.8rem; color: #8c8c8c; font-weight: 600; }
-    td { padding: 16px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #fafafa; }
+  /* Tables */
+  .table-wrap { background: #fff; border: 1px solid #f0f0f0; border-radius: 8px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  th { padding: 16px; text-align: left; background: #fafafa; border-bottom: 1px solid #f0f0f0; font-size: 0.8rem; color: #8c8c8c; font-weight: 600; }
+  td { padding: 16px; border-bottom: 1px solid #f0f0f0; font-size: 0.9rem; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafafa; }
 
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: #fff;
-      padding: 16px 24px;
-      border-radius: 4px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      z-index: 1000;
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s;
-      border-left: 4px solid #1890ff;
-    }
-    .toast.show { transform: translateY(0); opacity: 1; }
-    .toast.success { border-left-color: #52c41a; }
-    .toast.error { border-left-color: #ff4d4f; }
+  /* Toast */
+  .toast {
+   position: fixed;
+   bottom: 24px;
+   right: 24px;
+   background: #fff;
+   padding: 16px 24px;
+   border-radius: 4px;
+   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+   z-index: 1000;
+   transform: translateY(100px);
+   opacity: 0;
+   transition: all 0.3s;
+   border-left: 4px solid #1890ff;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left-color: #52c41a; }
+  .toast.error { border-left-color: #ff4d4f; }
 
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-    .spin { animation: rotate 1s linear infinite; display: inline-block; }
-    @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  </style>
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .spin { animation: rotate 1s linear infinite; display: inline-block; }
+  @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+ </style>
 </head>
 
 <body>
-  <div class="layout">
+ <div class="layout">
 
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <div class="logo">
-        <img src="/static/logo.jpg" alt="AutomatonAI"
-          style="width:140px;height:auto;margin-bottom:6px;border-radius:4px;" />
-        <div class="logo-sub">Crocs Order Bot</div>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+   <div class="logo">
+    <img src="/static/logo.jpg" alt="AutomatonAI"
+     style="width:140px;height:auto;margin-bottom:6px;border-radius:4px;" />
+    <div class="logo-sub">Crocs Order Bot</div>
+   </div>
+   <div class="nav-item active" onclick="showSection('make-call')">
+    <span class="nav-icon"></span>Make a Call
+   </div>
+   <div class="nav-item" onclick="showSection('orders')">
+    <span class="nav-icon"></span>Orders
+   </div>
+   <div class="nav-item" onclick="showSection('call-log')">
+    <span class="nav-icon"></span>Call Log
+   </div>
+   <div class="nav-item" onclick="showSection('products')">
+    <span class="nav-icon"></span>Products
+   </div>
+   <div class="nav-item" onclick="showSection('voice-chat')">
+    <span class="nav-icon"></span>Voice Chat
+   </div>
+   <div class="sidebar-footer">
+    <div>Bland.ai · SQLite · Flask</div>
+    <div class="api-badge" id="apiBadge">
+     <span class="api-dot" id="apiDot"></span>
+     <span id="apiStatus">checking...</span>
+    </div>
+   </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+   <!-- Make a Call -->
+   <div class="section active" id="sec-make-call">
+    <div class="page-header">
+     <div class="page-title">Make a Call</div>
+     <div class="page-sub">Enter a customer's phone number to initiate an AI order call</div>
+    </div>
+
+    <div class="stats-grid" id="statsGrid">
+     <div class="stat">
+      <div class="stat-val green" id="s-orders">—</div>
+      <div class="stat-label">Total Orders</div>
+     </div>
+     <div class="stat">
+      <div class="stat-val blue" id="s-calls">—</div>
+      <div class="stat-label">Calls Made</div>
+     </div>
+     <div class="stat">
+      <div class="stat-val yellow" id="s-revenue">—</div>
+      <div class="stat-label">Revenue (₹)</div>
+     </div>
+     <div class="stat">
+      <div class="stat-val purple" id="s-pending">—</div>
+      <div class="stat-label">Pending</div>
+     </div>
+    </div>
+
+    <!-- Language Stats -->
+    <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:24px;">
+     <div style="font-weight:bold;font-size:.9rem;margin-bottom:12px;">Orders by Language</div>
+     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;" id="langStatsGrid">
+      <div style="text-align:center;padding:12px;background:#f9f9f9;border:1px solid #eee;border-radius:6px;">
+       <div style="font-size:1.4rem;"></div>
+       <div style="font-weight:bold;font-size:1.2rem;margin:4px 0;" id="lang-en">0</div>
+       <div style="font-size:.75rem;color:#888;">English</div>
       </div>
-      <div class="nav-item active" onclick="showSection('make-call')">
-        <span class="nav-icon"></span> Make a Call
+      <div style="text-align:center;padding:12px;background:#f9f9f9;border:1px solid #eee;border-radius:6px;">
+       <div style="font-size:1.4rem;"></div>
+       <div style="font-weight:bold;font-size:1.2rem;margin:4px 0;" id="lang-hi">0</div>
+       <div style="font-size:.75rem;color:#888;">Hindi</div>
       </div>
-      <div class="nav-item" onclick="showSection('orders')">
-        <span class="nav-icon"></span> Orders
+      <div style="text-align:center;padding:12px;background:#f9f9f9;border:1px solid #eee;border-radius:6px;">
+       <div style="font-size:1.4rem;"></div>
+       <div style="font-weight:bold;font-size:1.2rem;margin:4px 0;" id="lang-kn">0</div>
+       <div style="font-size:.75rem;color:#888;">Kannada</div>
       </div>
-      <div class="nav-item" onclick="showSection('call-log')">
-        <span class="nav-icon"></span> Call Log
+     </div>
+    </div>
+
+    <div class="call-card">
+     <h2>AI Outbound Call</h2>
+
+     <div class="form-group">
+      <label class="form-label">Customer Phone Number</label>
+      <input type="tel" class="form-input" id="phoneInput"
+       placeholder="9876543210 (Indian number, +91 added auto)" />
+     </div>
+
+     <div class="form-group">
+      <label class="form-label">Customer Name (optional)</label>
+      <input type="text" class="form-input" id="nameInput" placeholder="e.g. Ravi Kumar" />
+     </div>
+
+     <div class="form-group">
+      <label class="form-label">Preferred Language</label>
+      <select class="form-input" id="callLangSelect">
+       <option value="auto">Auto-Detect (responds in customer's language)</option>
+       <option value="en">English</option>
+       <option value="hi">Hindi (हिन्दी)</option>
+       <option value="kn">Kannada (ಕನ್ನಡ)</option>
+      </select>
+     </div>
+
+     <button class="btn btn-primary" id="callBtn" onclick="makeCall()">
+      Call & Take Order
+     </button>
+
+     <div class="call-status-box" id="callStatusBox">
+      <div class="cstatus-row">
+       <span class="cstatus-dot" id="csDot"></span>
+       <span id="csText">Initiating call...</span>
       </div>
-      <div class="nav-item" onclick="showSection('products')">
-        <span class="nav-icon"></span> Products
+      <div style="color:var(--muted);font-size:.7rem;margin-top:4px;" id="csCallId"></div>
+     </div>
+
+     <!-- Quick Manual Order (shows after call) -->
+     <div id="manualOrderBox"
+      style="display:none;margin-top:18px;background:var(--s3);border:1px solid var(--border2);border-radius:12px;padding:18px;">
+      <div style="font-weight:600;font-size:.9rem;margin-bottom:12px;">Quick Record Order</div>
+      <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">Auto-detection didn't capture the
+       order? Record it manually below:</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
+       <div
+        style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:.8rem;font-weight:600;">Classic</div>
+        <div style="font-family:var(--mono);font-size:.7rem;color:var(--green);margin:4px 0;">₹3,999</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+         <button class="qty-btn" onclick="adjustManualQty('classic',-1)">−</button>
+         <span class="qty-num" id="mq-classic">0</span>
+         <button class="qty-btn" onclick="adjustManualQty('classic',1)">+</button>
+        </div>
+       </div>
+       <div
+        style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:.8rem;font-weight:600;">Premium</div>
+        <div style="font-family:var(--mono);font-size:.7rem;color:var(--green);margin:4px 0;">₹4,499</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+         <button class="qty-btn" onclick="adjustManualQty('premium',-1)">−</button>
+         <span class="qty-num" id="mq-premium">0</span>
+         <button class="qty-btn" onclick="adjustManualQty('premium',1)">+</button>
+        </div>
+       </div>
+       <div
+        style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
+        <div style="font-size:.8rem;font-weight:600;">Basic</div>
+        <div style="font-family:var(--mono);font-size:.7rem;color:var(--green);margin:4px 0;">₹2,999</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+         <button class="qty-btn" onclick="adjustManualQty('basic',-1)">−</button>
+         <span class="qty-num" id="mq-basic">0</span>
+         <button class="qty-btn" onclick="adjustManualQty('basic',1)">+</button>
+        </div>
+       </div>
       </div>
-      <div class="nav-item" onclick="showSection('voice-chat')">
-        <span class="nav-icon"></span> Voice Chat
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+       <span style="font-size:.85rem;font-weight:600;">Total: <span id="manualTotal"
+         style="color:var(--green);font-family:var(--mono);">₹0</span></span>
       </div>
-      <div class="sidebar-footer">
-        <div>Bland.ai · SQLite · Flask</div>
-        <div class="api-badge" id="apiBadge">
-          <span class="api-dot" id="apiDot"></span>
-          <span id="apiStatus">checking...</span>
-        </div>
-      </div>
-    </aside>
+      <button class="btn btn-primary" onclick="saveManualOrder()" style="font-size:.82rem;">Save Order</button>
+     </div>
+    </div>
+   </div>
 
-    <!-- Main -->
-    <main class="main">
-
-      <!--  Make a Call  -->
-      <div class="section active" id="sec-make-call">
-        <div class="page-header">
-          <div class="page-title"> Make a Call</div>
-          <div class="page-sub">Enter a customer's phone number to initiate an AI order call</div>
-        </div>
-
-        <div class="stats-grid" id="statsGrid">
-          <div class="stat">
-            <div class="stat-val green" id="s-orders">—</div>
-            <div class="stat-label">Total Orders</div>
-          </div>
-          <div class="stat">
-            <div class="stat-val blue" id="s-calls">—</div>
-            <div class="stat-label">Calls Made</div>
-          </div>
-          <div class="stat">
-            <div class="stat-val yellow" id="s-revenue">—</div>
-            <div class="stat-label">Revenue (₹)</div>
-          </div>
-          <div class="stat">
-            <div class="stat-val purple" id="s-pending">—</div>
-            <div class="stat-label">Pending</div>
-          </div>
-        </div>
-
-        <!-- Language Stats -->
-        <div style="background:#fff;border:1px solid #ddd;border-radius:8px;padding:16px;margin-bottom:24px;">
-          <div style="font-weight:bold;font-size:.9rem;margin-bottom:12px;"> Orders by Language</div>
-          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;" id="langStatsGrid">
-            <div style="text-align:center;padding:12px;background:#f9f9f9;border:1px solid #eee;border-radius:6px;">
-              <div style="font-size:1.4rem;"></div>
-              <div style="font-weight:bold;font-size:1.2rem;margin:4px 0;" id="lang-en">0</div>
-              <div style="font-size:.75rem;color:#888;">English</div>
-            </div>
-            <div style="text-align:center;padding:12px;background:#f9f9f9;border:1px solid #eee;border-radius:6px;">
-              <div style="font-size:1.4rem;"></div>
-              <div style="font-weight:bold;font-size:1.2rem;margin:4px 0;" id="lang-hi">0</div>
-              <div style="font-size:.75rem;color:#888;">Hindi</div>
-            </div>
-            <div style="text-align:center;padding:12px;background:#f9f9f9;border:1px solid #eee;border-radius:6px;">
-              <div style="font-size:1.4rem;"></div>
-              <div style="font-weight:bold;font-size:1.2rem;margin:4px 0;" id="lang-kn">0</div>
-              <div style="font-size:.75rem;color:#888;">Kannada</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="call-card">
-          <h2> AI Outbound Call</h2>
-
-          <div class="form-group">
-            <label class="form-label">Customer Phone Number</label>
-            <input type="tel" class="form-input" id="phoneInput"
-              placeholder="9876543210 (Indian number, +91 added auto)" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Customer Name (optional)</label>
-            <input type="text" class="form-input" id="nameInput" placeholder="e.g. Ravi Kumar" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label">Preferred Language</label>
-            <select class="form-input" id="callLangSelect">
-              <option value="auto"> Auto-Detect (responds in customer's language)</option>
-              <option value="en"> English</option>
-              <option value="hi"> Hindi (हिन्दी)</option>
-              <option value="kn"> Kannada (ಕನ್ನಡ)</option>
-            </select>
-          </div>
-
-          <button class="btn btn-primary" id="callBtn" onclick="makeCall()">
-            Call & Take Order
-          </button>
-
-          <div class="call-status-box" id="callStatusBox">
-            <div class="cstatus-row">
-              <span class="cstatus-dot" id="csDot"></span>
-              <span id="csText">Initiating call...</span>
-            </div>
-            <div style="color:var(--muted);font-size:.7rem;margin-top:4px;" id="csCallId"></div>
-          </div>
-
-          <!-- Quick Manual Order (shows after call) -->
-          <div id="manualOrderBox"
-            style="display:none;margin-top:18px;background:var(--s3);border:1px solid var(--border2);border-radius:12px;padding:18px;">
-            <div style="font-weight:600;font-size:.9rem;margin-bottom:12px;"> Quick Record Order</div>
-            <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px;">Auto-detection didn't capture the
-              order? Record it manually below:</div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px;">
-              <div
-                style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
-                <div style="font-size:.8rem;font-weight:600;">Classic</div>
-                <div style="font-family:var(--mono);font-size:.7rem;color:var(--green);margin:4px 0;">₹3,999</div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                  <button class="qty-btn" onclick="adjustManualQty('classic',-1)">−</button>
-                  <span class="qty-num" id="mq-classic">0</span>
-                  <button class="qty-btn" onclick="adjustManualQty('classic',1)">+</button>
-                </div>
-              </div>
-              <div
-                style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
-                <div style="font-size:.8rem;font-weight:600;">Premium</div>
-                <div style="font-family:var(--mono);font-size:.7rem;color:var(--green);margin:4px 0;">₹4,499</div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                  <button class="qty-btn" onclick="adjustManualQty('premium',-1)">−</button>
-                  <span class="qty-num" id="mq-premium">0</span>
-                  <button class="qty-btn" onclick="adjustManualQty('premium',1)">+</button>
-                </div>
-              </div>
-              <div
-                style="background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center;">
-                <div style="font-size:.8rem;font-weight:600;">Basic</div>
-                <div style="font-family:var(--mono);font-size:.7rem;color:var(--green);margin:4px 0;">₹2,999</div>
-                <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
-                  <button class="qty-btn" onclick="adjustManualQty('basic',-1)">−</button>
-                  <span class="qty-num" id="mq-basic">0</span>
-                  <button class="qty-btn" onclick="adjustManualQty('basic',1)">+</button>
-                </div>
-              </div>
-            </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-              <span style="font-size:.85rem;font-weight:600;">Total: <span id="manualTotal"
-                  style="color:var(--green);font-family:var(--mono);">₹0</span></span>
-            </div>
-            <button class="btn btn-primary" onclick="saveManualOrder()" style="font-size:.82rem;"> Save Order</button>
-          </div>
-        </div>
-      </div>
-
-      <!--  Orders  -->
-      <div class="section" id="sec-orders">
-        <div class="page-header">
-          <div class="page-title"> Orders</div>
-          <div class="page-sub">All orders captured from AI calls</div>
-        </div>
-        <div style="margin-bottom:14px;display:flex;gap:10px;">
-          <button class="btn btn-secondary" onclick="loadOrders()">↻ Refresh</button>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Phone</th>
-                <th>Products</th>
-                <th>Total</th>
-                <th>Lang</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody id="ordersBody">
-              <tr>
-                <td colspan="7">
-                  <div class="empty">
-                    <div class="empty-icon"></div>No orders yet
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!--  Call Log  -->
-      <div class="section" id="sec-call-log">
-        <div class="page-header">
-          <div class="page-title"> Call Log</div>
-          <div class="page-sub">All outbound calls initiated</div>
-        </div>
-        <div style="margin-bottom:14px;">
-          <button class="btn btn-secondary" onclick="loadCalls()">↻ Refresh</button>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Call ID</th>
-                <th>Phone</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="callsBody">
-              <tr>
-                <td colspan="6">
-                  <div class="empty">
-                    <div class="empty-icon"></div>No calls yet
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!--  Products  -->
-      <div class="section" id="sec-products">
-        <div class="page-header">
-          <div class="page-title"> Products</div>
-          <div class="page-sub">Crocs catalogue offered by the bot</div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:640px;">
-          <div class="call-card" style="max-width:none;padding:22px;text-align:center;">
-            <div style="font-size:2.5rem;margin-bottom:10px;"></div>
-            <div style="font-weight:700;margin-bottom:4px;">Classic</div>
-            <div style="font-family:var(--mono);color:var(--green);font-size:.9rem;">₹3,999</div>
-            <div style="font-size:.75rem;color:var(--muted);margin-top:8px;">Timeless comfort, all-day wear</div>
-          </div>
-          <div class="call-card" style="max-width:none;padding:22px;text-align:center;">
-            <div style="font-size:2.5rem;margin-bottom:10px;"></div>
-            <div style="font-weight:700;margin-bottom:4px;">Premium</div>
-            <div style="font-family:var(--mono);color:var(--green);font-size:.9rem;">₹4,499</div>
-            <div style="font-size:.75rem;color:var(--muted);margin-top:8px;">Ventilated, lightweight design</div>
-          </div>
-          <div class="call-card" style="max-width:none;padding:22px;text-align:center;">
-            <div style="font-size:2.5rem;margin-bottom:10px;"></div>
-            <div style="font-weight:700;margin-bottom:4px;">Basic</div>
-            <div style="font-family:var(--mono);color:var(--green);font-size:.9rem;">₹2,999</div>
-            <div style="font-size:.75rem;color:var(--muted);margin-top:8px;">Slide-on style, easy comfort</div>
-          </div>
-        </div>
-      </div>
-
-
-      <!--  Voice Chat  -->
-      <div class="section" id="sec-voice-chat">
-        <div class="page-header">
-          <div class="page-title"> Voice Chat Order Bot</div>
-          <div class="page-sub">Talk to the AI bot through your browser — 100% free, no API keys needed</div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;max-width:900px;">
-          <!-- Chat Window -->
-          <div class="call-card"
-            style="max-width:none;padding:0;overflow:hidden;display:flex;flex-direction:column;height:520px;">
-            <div
-              style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
-              <span style="font-size:1.2rem;"></span>
-              <div>
-                <div style="font-weight:600;font-size:.9rem;">Crocs Order Bot</div>
-                <div style="font-size:.7rem;color:var(--muted);" id="vcLangLabel">Language: Auto-detect</div>
-              </div>
-              <div style="margin-left:auto;">
-                <select class="form-input" id="vcLangSelect" style="width:auto;padding:6px 10px;font-size:.75rem;"
-                  onchange="setVoiceLang(this.value)">
-                  <option value="auto">Auto-Detect</option>
-                  <option value="en">English</option>
-                  <option value="hi">Hindi</option>
-                  <option value="kn">Kannada</option>
-                  <option value="mr">Marathi</option>
-                </select>
-              </div>
-            </div>
-            <div id="vcMessages"
-              style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;"></div>
-            <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;">
-              <button class="btn btn-primary" id="vcMicBtn" onclick="toggleVoiceChat()"
-                style="flex:none;width:52px;height:52px;border-radius:50%;padding:0;font-size:1.3rem;"></button>
-              <div style="flex:1;">
-                <div style="font-size:.75rem;color:var(--muted);" id="vcStatus">Click the mic to start talking</div>
-                <div style="font-family:var(--mono);font-size:.8rem;color:var(--text);min-height:20px;" id="vcLiveText">
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Order Summary Sidebar -->
-          <div class="call-card" style="max-width:none;height:520px;display:flex;flex-direction:column;">
-            <h2 style="font-size:.9rem;margin-bottom:14px;"> Current Order</h2>
-            <div id="vcOrderItems" style="flex:1;overflow-y:auto;">
-              <div style="color:var(--muted);font-size:.82rem;text-align:center;padding:20px;">No items yet</div>
-            </div>
-            <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px;">
-              <div style="display:flex;justify-content:space-between;font-weight:700;">
-                <span>Total</span>
-                <span style="font-family:var(--mono);color:var(--green);" id="vcTotal">₹0</span>
-              </div>
-            </div>
-            <button class="btn btn-secondary" style="margin-top:12px;width:100%;justify-content:center;"
-              onclick="resetVoiceChat()"> New Order</button>
-          </div>
-        </div>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
-
-  <script>
-    //  Navigation 
-    function showSection(name) {
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('sec-' + name).classList.add('active');
-      event.currentTarget.classList.add('active');
-
-      if (name === 'orders') loadOrders();
-      if (name === 'call-log') loadCalls();
-    }
-
-    //  Toast 
-    function toast(msg, type = 'success') {
-      const el = document.getElementById('toast');
-      el.textContent = msg;
-      el.className = `toast show ${type}`;
-      setTimeout(() => el.className = 'toast', 3000);
-    }
-
-    //  Stats 
-    async function loadStats() {
-      try {
-        const d = await fetch('/api/stats').then(r => r.json());
-        document.getElementById('s-orders').textContent = d.total_orders;
-        document.getElementById('s-calls').textContent = d.total_calls;
-        document.getElementById('s-revenue').textContent = '₹' + (d.total_revenue || 0).toLocaleString('en-IN');
-        document.getElementById('s-pending').textContent = d.pending_orders;
-        // Language counts
-        const lc = d.lang_counts || {};
-        document.getElementById('lang-en').textContent = lc['en'] || 0;
-        document.getElementById('lang-hi').textContent = lc['hi'] || 0;
-        document.getElementById('lang-kn').textContent = lc['kn'] || 0;
-        // API badge
-        document.getElementById('apiDot').className = 'api-dot ok';
-        document.getElementById('apiStatus').textContent = 'connected';
-      } catch (e) {
-        document.getElementById('apiStatus').textContent = 'offline';
-      }
-    }
-
-    //  Make Call 
-    async function makeCall() {
-      const phone = document.getElementById('phoneInput').value.trim();
-      if (!phone || phone.length < 10) { toast('Enter a valid 10-digit phone number', 'error'); return; }
-
-      const btn = document.getElementById('callBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spin"></span> Calling...';
-
-      const box = document.getElementById('callStatusBox');
-      const dot = document.getElementById('csDot');
-      const text = document.getElementById('csText');
-      const cid = document.getElementById('csCallId');
-      box.className = 'call-status-box show';
-      dot.className = 'cstatus-dot';
-      text.textContent = 'Initiating call via Bland.ai...';
-      cid.textContent = '';
-
-      try {
-        const lang = document.getElementById('callLangSelect').value;
-        const res = await fetch('/api/call', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone, language: lang })
-        });
-        const data = await res.json();
-
-        if (data.error) {
-          dot.className = 'cstatus-dot error';
-          text.textContent = 'Error: ' + data.error;
-          toast('Call failed: ' + data.error, 'error');
-        } else {
-          dot.className = 'cstatus-dot';
-          text.textContent = ' Call connected to ' + data.phone;
-          cid.textContent = 'Call ID: ' + data.call_id;
-          toast('Call initiated! Bot is now calling the customer.', 'success');
-          loadStats();
-          // Poll status after 30s
-          setTimeout(() => pollCallStatus(data.call_id), 30000);
-        }
-      } catch (e) {
-        dot.className = 'cstatus-dot error';
-        text.textContent = 'Server error. Is Flask running?';
-        toast('Server error', 'error');
-      }
-
-      btn.disabled = false;
-      btn.innerHTML = ' Call & Take Order';
-    }
-
-    async function pollCallStatus(callId) {
-      try {
-        const data = await fetch('/api/call/status/' + callId).then(r => r.json());
-        const dot = document.getElementById('csDot');
-        const text = document.getElementById('csText');
-        const status = (data.status || '').toLowerCase();
-        if (status === 'completed' || status === 'ended') {
-          dot.className = 'cstatus-dot done';
-          text.textContent = ' Call completed.';
-          loadStats();
-          loadOrders();
-          // Show manual order box so user can record order
-          document.getElementById('manualOrderBox').style.display = 'block';
-          window._lastCallId = callId;
-          window._lastCallPhone = document.getElementById('phoneInput').value.trim();
-        } else if (status === 'failed' || status === 'error') {
-          dot.className = 'cstatus-dot error';
-          text.textContent = ' Call failed.';
-        } else {
-          text.textContent = ' Call in progress... (' + status + ')';
-          setTimeout(() => pollCallStatus(callId), 15000);
-        }
-      } catch (e) { }
-    }
-
-    //  Manual Order 
-    const manualQty = { classic: 0, premium: 0, basic: 0 };
-    const manualPrices = { classic: 3999, premium: 4499, basic: 2999 };
-
-    function adjustManualQty(product, delta) {
-      manualQty[product] = Math.max(0, manualQty[product] + delta);
-      document.getElementById('mq-' + product).textContent = manualQty[product];
-      const total = Object.keys(manualQty).reduce((s, k) => s + manualQty[k] * manualPrices[k], 0);
-      document.getElementById('manualTotal').textContent = '₹' + total.toLocaleString('en-IN');
-    }
-
-    async function saveManualOrder() {
-      const products = [];
-      if (manualQty.classic > 0) products.push({ name: 'Classic', quantity: manualQty.classic, price: 3999 });
-      if (manualQty.premium > 0) products.push({ name: 'Premium', quantity: manualQty.premium, price: 4499 });
-      if (manualQty.basic > 0) products.push({ name: 'Basic', quantity: manualQty.basic, price: 2999 });
-
-      if (!products.length) { toast('Add at least one product!', 'error'); return; }
-
-      const total = products.reduce((s, p) => s + p.price * p.quantity, 0);
-      const phone = window._lastCallPhone || document.getElementById('phoneInput').value.trim() || 'manual';
-
-      try {
-        await fetch('/api/orders/manual', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            phone: phone,
-            call_id: window._lastCallId || '',
-            products: products,
-            total: total,
-            language: 'en',
-          })
-        });
-        toast(' Order saved successfully!', 'success');
-        loadStats();
-        loadOrders();
-        // Reset
-        manualQty.classic = 0; manualQty.premium = 0; manualQty.basic = 0;
-        document.getElementById('mq-classic').textContent = '0';
-        document.getElementById('mq-premium').textContent = '0';
-        document.getElementById('mq-basic').textContent = '0';
-        document.getElementById('manualTotal').textContent = '₹0';
-        document.getElementById('manualOrderBox').style.display = 'none';
-      } catch (e) {
-        toast('Failed to save order', 'error');
-      }
-    }
-
-    //  Orders 
-    async function loadOrders() {
-      const body = document.getElementById('ordersBody');
-      body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
-      try {
-        const orders = await fetch('/api/orders').then(r => r.json());
-        if (!orders.length) {
-          body.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon"></div>No orders yet. Make a call!</div></td></tr>';
-          return;
-        }
-        body.innerHTML = orders.map((o, i) => `
-      <tr>
-        <td style="font-family:var(--mono);color:var(--muted)">#${o.id}</td>
-        <td style="font-family:var(--mono)">${o.phone}</td>
-        <td>
-          <div class="order-products">
-            ${(o.products || []).map(p => `
-              <div class="op-item"><span>${p.name}</span> × ${p.quantity} — ₹${(p.price * p.quantity).toLocaleString('en-IN')}</div>
-            `).join('')}
-          </div>
+   <!-- Orders -->
+   <div class="section" id="sec-orders">
+    <div class="page-header">
+     <div class="page-title">Orders</div>
+     <div class="page-sub">All orders captured from AI calls</div>
+    </div>
+    <div style="margin-bottom:14px;display:flex;gap:10px;">
+     <button class="btn btn-secondary" onclick="loadOrders()">↻ Refresh</button>
+    </div>
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>#</th>
+        <th>Phone</th>
+        <th>Products</th>
+        <th>Total</th>
+        <th>Lang</th>
+        <th>Status</th>
+        <th>Date</th>
+       </tr>
+      </thead>
+      <tbody id="ordersBody">
+       <tr>
+        <td colspan="7">
+         <div class="empty">
+          <div class="empty-icon"></div>No orders yet
+         </div>
         </td>
-        <td style="font-family:var(--mono);color:var(--green)">₹${(o.total || 0).toLocaleString('en-IN')}</td>
-        <td><span class="lang-flag">${langFlag(o.language)}</span> ${o.language}</td>
-        <td><span class="badge ${o.status}">${o.status}</span></td>
-        <td style="color:var(--muted);font-size:.76rem">${fmtDate(o.created_at)}</td>
-      </tr>
-    `).join('');
-      } catch (e) {
-        body.innerHTML = '<tr><td colspan="7" style="color:var(--red);padding:16px;">Failed to load orders</td></tr>';
-      }
-    }
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </div>
 
-    //  Calls 
-    async function loadCalls() {
-      const body = document.getElementById('callsBody');
-      body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
-      try {
-        const calls = await fetch('/api/calls').then(r => r.json());
-        if (!calls.length) {
-          body.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon"></div>No calls yet</div></td></tr>';
-          return;
-        }
-        body.innerHTML = calls.map(c => `
-      <tr>
-        <td style="font-family:var(--mono);color:var(--muted)">#${c.id}</td>
-        <td class="call-id">${c.call_id || '—'}</td>
-        <td style="font-family:var(--mono)">${c.phone}</td>
-        <td><span class="badge ${statusClass(c.status)}">${c.status}</span></td>
-        <td style="color:var(--muted);font-size:.76rem">${fmtDate(c.created_at)}</td>
-        <td>
-          ${c.call_id ? `<button class="btn btn-secondary" onclick="pollCallStatus('${c.call_id}')">↻ Status</button>` : '—'}
+   <!-- Call Log -->
+   <div class="section" id="sec-call-log">
+    <div class="page-header">
+     <div class="page-title">Call Log</div>
+     <div class="page-sub">All outbound calls initiated</div>
+    </div>
+    <div style="margin-bottom:14px;">
+     <button class="btn btn-secondary" onclick="loadCalls()">↻ Refresh</button>
+    </div>
+    <div class="table-wrap">
+     <table>
+      <thead>
+       <tr>
+        <th>#</th>
+        <th>Call ID</th>
+        <th>Phone</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Action</th>
+       </tr>
+      </thead>
+      <tbody id="callsBody">
+       <tr>
+        <td colspan="6">
+         <div class="empty">
+          <div class="empty-icon"></div>No calls yet
+         </div>
         </td>
-      </tr>
-    `).join('');
-      } catch (e) {
-        body.innerHTML = '<tr><td colspan="6" style="color:var(--red);padding:16px;">Failed to load calls</td></tr>';
-      }
-    }
+       </tr>
+      </tbody>
+     </table>
+    </div>
+   </div>
 
-    //  Helpers 
-    function langFlag(lang) {
-      const m = { en: '', hi: '', kn: '', mr: '' };
-      return m[lang] || '';
-    }
-    function statusClass(s) {
-      if (!s) return 'pending';
-      if (s.includes('complet') || s.includes('end')) return 'confirmed';
-      if (s.includes('fail') || s.includes('error')) return 'failed';
-      return 'pending';
-    }
-    function fmtDate(d) {
-      if (!d) return '—';
-      try { return new Date(d).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }); }
-      catch { return d; }
-    }
+   <!-- Products -->
+   <div class="section" id="sec-products">
+    <div class="page-header">
+     <div class="page-title">Products</div>
+     <div class="page-sub">Crocs catalogue offered by the bot</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:640px;">
+     <div class="call-card" style="max-width:none;padding:22px;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:10px;"></div>
+      <div style="font-weight:700;margin-bottom:4px;">Classic</div>
+      <div style="font-family:var(--mono);color:var(--green);font-size:.9rem;">₹3,999</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:8px;">Timeless comfort, all-day wear</div>
+     </div>
+     <div class="call-card" style="max-width:none;padding:22px;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:10px;"></div>
+      <div style="font-weight:700;margin-bottom:4px;">Premium</div>
+      <div style="font-family:var(--mono);color:var(--green);font-size:.9rem;">₹4,499</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:8px;">Ventilated, lightweight design</div>
+     </div>
+     <div class="call-card" style="max-width:none;padding:22px;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:10px;"></div>
+      <div style="font-weight:700;margin-bottom:4px;">Basic</div>
+      <div style="font-family:var(--mono);color:var(--green);font-size:.9rem;">₹2,999</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:8px;">Slide-on style, easy comfort</div>
+     </div>
+    </div>
+   </div>
 
-    //  Inbound 
-    async function setupInbound() {
-      const phone = document.getElementById('inboundNumber').value.trim();
-      if (!phone) { toast('Enter a Bland.ai inbound phone number', 'error'); return; }
 
-      const btn = document.getElementById('inboundBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spin"></span> Setting up...';
+   <!-- Voice Chat -->
+   <div class="section" id="sec-voice-chat">
+    <div class="page-header">
+     <div class="page-title">Voice Chat Order Bot</div>
+     <div class="page-sub">Talk to the AI bot through your browser — 100% free, no API keys needed</div>
+    </div>
 
-      const box = document.getElementById('inboundStatusBox');
-      const dot = document.getElementById('inboundDot');
-      const text = document.getElementById('inboundText');
-      box.className = 'call-status-box show';
-      dot.className = 'cstatus-dot';
-      text.textContent = 'Configuring inbound bot on Bland.ai...';
-
-      try {
-        const res = await fetch('/api/inbound/setup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone_number: phone })
-        });
-        const data = await res.json();
-
-        if (data.error) {
-          dot.className = 'cstatus-dot error';
-          text.textContent = 'Error: ' + data.error;
-          toast('Setup failed: ' + data.error, 'error');
-        } else {
-          dot.className = 'cstatus-dot done';
-          text.textContent = ' Inbound bot is now active!';
-          document.getElementById('inboundInfo').style.display = 'block';
-          document.getElementById('activeNumber').textContent = ' ' + phone;
-          toast('Inbound bot is live! Call ' + phone + ' to place orders.', 'success');
-        }
-      } catch (e) {
-        dot.className = 'cstatus-dot error';
-        text.textContent = 'Server error.';
-        toast('Server error', 'error');
-      }
-
-      btn.disabled = false;
-      btn.innerHTML = ' Setup Inbound Bot';
-    }
-
-    //  Voice Chat Bot (100% Free — Web Speech API) 
-    const VC_PRODUCTS = {
-      classic: { name: 'Classic', price: 3999 },
-      premium: { name: 'Premium', price: 4499 },
-      basic: { name: 'Basic', price: 2999 },
-    };
-
-    const VC_STRINGS = {
-      en: {
-        greet: "Hello! Welcome to Automaton Crocs Store! I can help you place an order. We have three products: Classic at ₹3,999, Premium at ₹4,499, and Basic at ₹2,999. Which one would you like?",
-        askQty: "How many pairs of {product} would you like?",
-        addMore: "Got it! {qty} pairs of {product}. Would you like to add another product?",
-        confirm: "Your order summary: {items}. Total: ₹{total}. Shall I confirm this order?",
-        confirmed: "Your order has been placed successfully! Thank you for choosing Automaton Crocs!",
-        cancelled: "No problem! Feel free to order anytime. Goodbye!",
-        noProduct: "Sorry, I didn't catch that. Please say Classic, Premium, or Basic.",
-        noQty: "Please tell me a number, like 1, 2, or 3.",
-        yesNo: "Please say Yes to confirm or No to cancel.",
-      },
-      hi: {
-        greet: "Namaste! Automaton Crocs Store mein aapka swagat hai! Humare paas teen products hain: Classic ₹3,999, Premium ₹4,499, aur Basic ₹2,999. Aap kaun sa lena chahenge?",
-        askQty: "{product} ke kitne pairs chahiye?",
-        addMore: "Theek hai! {product} ke {qty} pairs. Kya aap aur kuch add karna chahenge?",
-        confirm: "Aapka order: {items}. Total: ₹{total}. Kya confirm karoon?",
-        confirmed: "Aapka order confirm ho gaya! Dhanyavaad!",
-        cancelled: "Koi baat nahi! Kabhi bhi order karein. Alvida!",
-        noProduct: "Maaf kijiye, mujhe samajh nahi aaya. Kripya Classic, Premium, ya Basic bolein.",
-        noQty: "Kripya ek number bataiye, jaise 1, 2, ya 3.",
-        yesNo: "Kripya Haan ya Nahi bolein.",
-      },
-      kn: {
-        greet: "Namaskara! Automaton Crocs Store ge swagatavagide! Namma balli mooru products ide: Classic ₹3,999, Premium ₹4,499, mattu Basic ₹2,999. Nimge yaavudu beku?",
-        askQty: "{product} estu pairs beku?",
-        addMore: "Sari! {product} {qty} pairs. Innenu beka?",
-        confirm: "Nimma order: {items}. Total: ₹{total}. Confirm maadabeka?",
-        confirmed: "Nimma order confirm aagide! Dhanyavaadagalu!",
-        cancelled: "Paravaagilla! Yavaaga beku adaaga order maadi. Hogi banni!",
-        noProduct: "Kshamisi, nanage arthaagalilla. Dayavittu Classic, Premium, athava Basic heli.",
-        noQty: "Dayavittu ondu sankhye heli, 1, 2, athava 3.",
-        yesNo: "Dayavittu Haudu athava Illa heli.",
-      },
-      mr: {
-        greet: "Namaskar! Automaton Crocs Store madhye tumche swagat aahe! Aamchyakade teen products aahet: Classic ₹3,999, Premium ₹4,499, ani Basic ₹2,999. Tumhala kaay pahije?",
-        askQty: "{product} che kiti pairs pahije?",
-        addMore: "Theek aahe! {product} che {qty} pairs. Aankhi kahitari add karayche aahe ka?",
-        confirm: "Tumcha order: {items}. Total: ₹{total}. Confirm karoo ka?",
-        confirmed: "Tumcha order confirm zala! Dhanyavaad!",
-        cancelled: "Kahi harkat nahi! Kevhahi order dya. Punha yaa!",
-        noProduct: "Maaf kara, mala samjale nahi. Krupya Classic, Premium, kinva Basic sanga.",
-        noQty: "Krupya ek number sanga, jase 1, 2, kinva 3.",
-        yesNo: "Krupya Ho kinva Nahi sanga.",
-      },
-    };
-
-    let vcState = 'idle'; // idle, ask_product, ask_qty, ask_more, confirm, done
-    let vcLang = 'en';
-    let vcAutoLang = true;
-    let vcOrder = []; // [{name, qty, price}]
-    let vcCurrentProduct = null;
-    let vcRecognition = null;
-    let vcListening = false;
-
-    function setVoiceLang(val) {
-      if (val === 'auto') { vcAutoLang = true; }
-      else { vcAutoLang = false; vcLang = val; }
-      document.getElementById('vcLangLabel').textContent = 'Language: ' + (val === 'auto' ? 'Auto-detect' : val.toUpperCase());
-    }
-
-    function vcStr(key) { return (VC_STRINGS[vcLang] || VC_STRINGS.en)[key] || VC_STRINGS.en[key]; }
-
-    function addVcMsg(text, from = 'bot') {
-      const el = document.getElementById('vcMessages');
-      const div = document.createElement('div');
-      div.style.cssText = from === 'bot'
-        ? 'background:var(--s3);border:1px solid var(--border);border-radius:12px 12px 12px 2px;padding:10px 14px;font-size:.85rem;max-width:85%;align-self:flex-start;'
-        : 'background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.2);border-radius:12px 12px 2px 12px;padding:10px 14px;font-size:.85rem;max-width:85%;align-self:flex-end;color:var(--green2);';
-      div.textContent = (from === 'bot' ? ' ' : ' ') + text;
-      el.appendChild(div);
-      el.scrollTop = el.scrollHeight;
-    }
-
-    function botSpeak(text) {
-      addVcMsg(text, 'bot');
-      const utter = new SpeechSynthesisUtterance(text);
-      const langMap = { en: 'en-IN', hi: 'hi-IN', kn: 'kn-IN', mr: 'mr-IN' };
-      utter.lang = langMap[vcLang] || 'en-IN';
-      utter.rate = 0.95;
-      speechSynthesis.cancel();
-      speechSynthesis.speak(utter);
-    }
-
-    function detectLang(text) {
-      const t = text.toLowerCase();
-      if (/namaste|haan|nahi|chahiye|kitne|theek|karna/.test(t)) return 'hi';
-      if (/namaskara|haudu|illa|beku|estu|sari|heli/.test(t)) return 'kn';
-      if (/namaskar|ho|nahi|pahije|kiti|karay|sanga/.test(t)) return 'mr';
-      return 'en';
-    }
-
-    function matchProduct(text) {
-      const t = text.toLowerCase();
-      if (/classic/.test(t)) return 'classic';
-      if (/premium/.test(t)) return 'premium';
-      if (/basic/.test(t)) return 'basic';
-      if (/one|1|ek|ondu|first|pehla/.test(t)) return 'classic';
-      if (/two|2|do|eradu|second|dusra/.test(t)) return 'premium';
-      if (/three|3|teen|mooru|third|tisra/.test(t)) return 'basic';
-      return null;
-    }
-
-    function matchQty(text) {
-      const nums = {
-        one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
-        ek: 1, do: 2, teen: 3, char: 4, paanch: 5, ondu: 1, eradu: 2, mooru: 3, nalku: 4, aidu: 5
-      };
-      const t = text.toLowerCase().trim();
-      for (const [word, num] of Object.entries(nums)) { if (t.includes(word)) return num; }
-      const m = t.match(/\d+/);
-      return m ? parseInt(m[0]) : null;
-    }
-
-    function matchYes(text) {
-      return /yes|haan|ha|ho|haudu|sari|theek|confirm|okay|ok|sure/i.test(text);
-    }
-    function matchNo(text) {
-      return /no|nahi|nako|illa|cancel|nope|stop/i.test(text);
-    }
-
-    function updateVcOrderUI() {
-      const el = document.getElementById('vcOrderItems');
-      if (!vcOrder.length) { el.innerHTML = '<div style="color:var(--muted);font-size:.82rem;text-align:center;padding:20px;">No items yet</div>'; }
-      else {
-        el.innerHTML = vcOrder.map(o => `
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem;">
-        <div><strong>${o.name}</strong> × ${o.qty}</div>
-        <div style="font-family:var(--mono);color:var(--green);">₹${(o.price * o.qty).toLocaleString('en-IN')}</div>
+    <div style="display:grid;grid-template-columns:1fr 320px;gap:20px;max-width:900px;">
+     <!-- Chat Window -->
+     <div class="call-card"
+      style="max-width:none;padding:0;overflow:hidden;display:flex;flex-direction:column;height:520px;">
+      <div
+       style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
+       <span style="font-size:1.2rem;"></span>
+       <div>
+        <div style="font-weight:600;font-size:.9rem;">Crocs Order Bot</div>
+        <div style="font-size:.7rem;color:var(--muted);" id="vcLangLabel">Language: Auto-detect</div>
+       </div>
+       <div style="margin-left:auto;">
+        <select class="form-input" id="vcLangSelect" style="width:auto;padding:6px 10px;font-size:.75rem;"
+         onchange="setVoiceLang(this.value)">
+         <option value="auto">Auto-Detect</option>
+         <option value="en">English</option>
+         <option value="hi">Hindi</option>
+         <option value="kn">Kannada</option>
+         <option value="mr">Marathi</option>
+        </select>
+       </div>
       </div>
-    `).join('');
-      }
-      const total = vcOrder.reduce((s, o) => s + o.price * o.qty, 0);
-      document.getElementById('vcTotal').textContent = '₹' + total.toLocaleString('en-IN');
+      <div id="vcMessages"
+       style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;"></div>
+      <div style="padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:10px;align-items:center;">
+       <button class="btn btn-primary" id="vcMicBtn" onclick="toggleVoiceChat()"
+        style="flex:none;width:52px;height:52px;border-radius:50%;padding:0;font-size:1.3rem;"></button>
+       <div style="flex:1;">
+        <div style="font-size:.75rem;color:var(--muted);" id="vcStatus">Click the mic to start talking</div>
+        <div style="font-family:var(--mono);font-size:.8rem;color:var(--text);min-height:20px;" id="vcLiveText">
+        </div>
+       </div>
+      </div>
+     </div>
+
+     <!-- Order Summary Sidebar -->
+     <div class="call-card" style="max-width:none;height:520px;display:flex;flex-direction:column;">
+      <h2 style="font-size:.9rem;margin-bottom:14px;">Current Order</h2>
+      <div id="vcOrderItems" style="flex:1;overflow-y:auto;">
+       <div style="color:var(--muted);font-size:.82rem;text-align:center;padding:20px;">No items yet</div>
+      </div>
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px;">
+       <div style="display:flex;justify-content:space-between;font-weight:700;">
+        <span>Total</span>
+        <span style="font-family:var(--mono);color:var(--green);" id="vcTotal">₹0</span>
+       </div>
+      </div>
+      <button class="btn btn-secondary" style="margin-top:12px;width:100%;justify-content:center;"
+       onclick="resetVoiceChat()">New Order</button>
+     </div>
+    </div>
+   </div>
+
+  </main>
+ </div>
+
+ <!-- Toast -->
+ <div class="toast" id="toast"></div>
+
+ <script>
+  // Navigation 
+  function showSection(name) {
+   document.querySelectorAll('.section').forEach(s =>s.classList.remove('active'));
+   document.querySelectorAll('.nav-item').forEach(n =>n.classList.remove('active'));
+   document.getElementById('sec-' + name).classList.add('active');
+   event.currentTarget.classList.add('active');
+
+   if (name === 'orders') loadOrders();
+   if (name === 'call-log') loadCalls();
+  }
+
+  // Toast 
+  function toast(msg, type = 'success') {
+   const el = document.getElementById('toast');
+   el.textContent = msg;
+   el.className = `toast show ${type}`;
+   setTimeout(() =>el.className = 'toast', 3000);
+  }
+
+  // Stats 
+  async function loadStats() {
+   try {
+    const d = await fetch('/api/stats').then(r =>r.json());
+    document.getElementById('s-orders').textContent = d.total_orders;
+    document.getElementById('s-calls').textContent = d.total_calls;
+    document.getElementById('s-revenue').textContent = '₹' + (d.total_revenue || 0).toLocaleString('en-IN');
+    document.getElementById('s-pending').textContent = d.pending_orders;
+    // Language counts
+    const lc = d.lang_counts || {};
+    document.getElementById('lang-en').textContent = lc['en'] || 0;
+    document.getElementById('lang-hi').textContent = lc['hi'] || 0;
+    document.getElementById('lang-kn').textContent = lc['kn'] || 0;
+    // API badge
+    document.getElementById('apiDot').className = 'api-dot ok';
+    document.getElementById('apiStatus').textContent = 'connected';
+   } catch (e) {
+    document.getElementById('apiStatus').textContent = 'offline';
+   }
+  }
+
+  // Make Call 
+  async function makeCall() {
+   const phone = document.getElementById('phoneInput').value.trim();
+   if (!phone || phone.length < 10) { toast('Enter a valid 10-digit phone number', 'error'); return; }
+
+   const btn = document.getElementById('callBtn');
+   btn.disabled = true;
+   btn.innerHTML = '<span class="spin"></span>Calling...';
+
+   const box = document.getElementById('callStatusBox');
+   const dot = document.getElementById('csDot');
+   const text = document.getElementById('csText');
+   const cid = document.getElementById('csCallId');
+   box.className = 'call-status-box show';
+   dot.className = 'cstatus-dot';
+   text.textContent = 'Initiating call via Bland.ai...';
+   cid.textContent = '';
+
+   try {
+    const lang = document.getElementById('callLangSelect').value;
+    const res = await fetch('/api/call', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ phone, language: lang })
+    });
+    const data = await res.json();
+
+    if (data.error) {
+     dot.className = 'cstatus-dot error';
+     text.textContent = 'Error: ' + data.error;
+     toast('Call failed: ' + data.error, 'error');
+    } else {
+     dot.className = 'cstatus-dot';
+     text.textContent = ' Call connected to ' + data.phone;
+     cid.textContent = 'Call ID: ' + data.call_id;
+     toast('Call initiated! Bot is now calling the customer.', 'success');
+     loadStats();
+     // Poll status after 30s
+     setTimeout(() =>pollCallStatus(data.call_id), 30000);
     }
+   } catch (e) {
+    dot.className = 'cstatus-dot error';
+    text.textContent = 'Server error. Is Flask running?';
+    toast('Server error', 'error');
+   }
 
-    function processVoiceInput(text) {
-      addVcMsg(text, 'user');
+   btn.disabled = false;
+   btn.innerHTML = ' Call & Take Order';
+  }
 
-      // Auto detect language on first message
-      if (vcAutoLang && vcState === 'ask_product') {
-        vcLang = detectLang(text);
-        document.getElementById('vcLangLabel').textContent = 'Language: ' + vcLang.toUpperCase();
-      }
-
-      switch (vcState) {
-        case 'ask_product': {
-          const p = matchProduct(text);
-          if (!p) { botSpeak(vcStr('noProduct')); return; }
-          vcCurrentProduct = p;
-          vcState = 'ask_qty';
-          botSpeak(vcStr('askQty').replace('{product}', VC_PRODUCTS[p].name));
-          break;
-        }
-        case 'ask_qty': {
-          const q = matchQty(text);
-          if (!q || q < 1 || q > 100) { botSpeak(vcStr('noQty')); return; }
-          const prod = VC_PRODUCTS[vcCurrentProduct];
-          // Check if already in order, add qty
-          const existing = vcOrder.find(o => o.name === prod.name);
-          if (existing) existing.qty += q;
-          else vcOrder.push({ name: prod.name, qty: q, price: prod.price });
-          updateVcOrderUI();
-          vcState = 'ask_more';
-          botSpeak(vcStr('addMore').replace('{product}', prod.name).replace('{qty}', q));
-          break;
-        }
-        case 'ask_more': {
-          if (matchYes(text)) {
-            vcState = 'ask_product';
-            botSpeak(vcStr('noProduct').replace('Sorry, I didn\'t catch that. ', ''));
-          } else if (matchNo(text)) {
-            vcState = 'confirm';
-            const items = vcOrder.map(o => `${o.name} × ${o.qty}`).join(', ');
-            const total = vcOrder.reduce((s, o) => s + o.price * o.qty, 0);
-            botSpeak(vcStr('confirm').replace('{items}', items).replace('{total}', total.toLocaleString('en-IN')));
-          } else {
-            // Maybe they said a product name directly
-            const p = matchProduct(text);
-            if (p) {
-              vcCurrentProduct = p;
-              vcState = 'ask_qty';
-              botSpeak(vcStr('askQty').replace('{product}', VC_PRODUCTS[p].name));
-            } else {
-              botSpeak(vcStr('yesNo'));
-            }
-          }
-          break;
-        }
-        case 'confirm': {
-          if (matchYes(text)) {
-            vcState = 'done';
-            botSpeak(vcStr('confirmed'));
-            // Save order to DB
-            const total = vcOrder.reduce((s, o) => s + o.price * o.qty, 0);
-            fetch('/api/orders/manual', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                phone: 'voice-chat',
-                products: vcOrder.map(o => ({ name: o.name, quantity: o.qty, price: o.price })),
-                total: total,
-                language: vcLang,
-              })
-            }).then(() => { loadStats(); loadOrders(); toast('Order saved to database!', 'success'); });
-            stopListening();
-          } else if (matchNo(text)) {
-            vcState = 'done';
-            botSpeak(vcStr('cancelled'));
-            stopListening();
-          } else {
-            botSpeak(vcStr('yesNo'));
-          }
-          break;
-        }
-        case 'done': {
-          botSpeak(vcStr('greet'));
-          vcState = 'ask_product';
-          vcOrder = [];
-          updateVcOrderUI();
-          break;
-        }
-      }
+  async function pollCallStatus(callId) {
+   try {
+    const data = await fetch('/api/call/status/' + callId).then(r =>r.json());
+    const dot = document.getElementById('csDot');
+    const text = document.getElementById('csText');
+    const status = (data.status || '').toLowerCase();
+    if (status === 'completed' || status === 'ended') {
+     dot.className = 'cstatus-dot done';
+     text.textContent = ' Call completed.';
+     loadStats();
+     loadOrders();
+     // Show manual order box so user can record order
+     document.getElementById('manualOrderBox').style.display = 'block';
+     window._lastCallId = callId;
+     window._lastCallPhone = document.getElementById('phoneInput').value.trim();
+    } else if (status === 'failed' || status === 'error') {
+     dot.className = 'cstatus-dot error';
+     text.textContent = ' Call failed.';
+    } else {
+     text.textContent = ' Call in progress... (' + status + ')';
+     setTimeout(() =>pollCallStatus(callId), 15000);
     }
+   } catch (e) { }
+  }
 
-    function startListening() {
-      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        toast('Speech recognition not supported. Use Chrome!', 'error');
-        return;
-      }
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      vcRecognition = new SR();
-      const langMap = { en: 'en-IN', hi: 'hi-IN', kn: 'kn-IN', mr: 'mr-IN' };
-      vcRecognition.lang = langMap[vcLang] || 'en-IN';
-      vcRecognition.continuous = true;
-      vcRecognition.interimResults = true;
+  // Manual Order 
+  const manualQty = { classic: 0, premium: 0, basic: 0 };
+  const manualPrices = { classic: 3999, premium: 4499, basic: 2999 };
 
-      vcRecognition.onresult = (e) => {
-        let final = '';
-        let interim = '';
-        for (let i = e.resultIndex; i < e.results.length; i++) {
-          if (e.results[i].isFinal) final += e.results[i][0].transcript;
-          else interim += e.results[i][0].transcript;
-        }
-        document.getElementById('vcLiveText').textContent = interim || '';
-        if (final) {
-          document.getElementById('vcLiveText').textContent = '';
-          processVoiceInput(final.trim());
-        }
-      };
+  function adjustManualQty(product, delta) {
+   manualQty[product] = Math.max(0, manualQty[product] + delta);
+   document.getElementById('mq-' + product).textContent = manualQty[product];
+   const total = Object.keys(manualQty).reduce((s, k) =>s + manualQty[k] * manualPrices[k], 0);
+   document.getElementById('manualTotal').textContent = '₹' + total.toLocaleString('en-IN');
+  }
 
-      vcRecognition.onerror = (e) => {
-        if (e.error !== 'no-speech') {
-          document.getElementById('vcStatus').textContent = 'Mic error: ' + e.error;
-        }
-      };
+  async function saveManualOrder() {
+   const products = [];
+   if (manualQty.classic >0) products.push({ name: 'Classic', quantity: manualQty.classic, price: 3999 });
+   if (manualQty.premium >0) products.push({ name: 'Premium', quantity: manualQty.premium, price: 4499 });
+   if (manualQty.basic >0) products.push({ name: 'Basic', quantity: manualQty.basic, price: 2999 });
 
-      vcRecognition.onend = () => {
-        if (vcListening && vcState !== 'done') {
-          const langMap = { en: 'en-IN', hi: 'hi-IN', kn: 'kn-IN', mr: 'mr-IN' };
-          vcRecognition.lang = langMap[vcLang] || 'en-IN';
-          vcRecognition.start();
-        }
-      };
+   if (!products.length) { toast('Add at least one product!', 'error'); return; }
 
-      vcRecognition.start();
-      vcListening = true;
-      document.getElementById('vcMicBtn').style.background = 'linear-gradient(135deg,#ff5757,#cc3333)';
-      document.getElementById('vcMicBtn').textContent = '';
-      document.getElementById('vcStatus').textContent = ' Listening... speak now!';
-    }
+   const total = products.reduce((s, p) =>s + p.price * p.quantity, 0);
+   const phone = window._lastCallPhone || document.getElementById('phoneInput').value.trim() || 'manual';
 
-    function stopListening() {
-      vcListening = false;
-      if (vcRecognition) { vcRecognition.stop(); vcRecognition = null; }
-      document.getElementById('vcMicBtn').style.background = 'linear-gradient(135deg,var(--green),#00b87a)';
-      document.getElementById('vcMicBtn').textContent = '';
-      document.getElementById('vcStatus').textContent = 'Click the mic to start talking';
-      document.getElementById('vcLiveText').textContent = '';
-    }
-
-    function toggleVoiceChat() {
-      if (vcListening) { stopListening(); return; }
-      if (vcState === 'idle' || vcState === 'done') {
-        vcState = 'ask_product';
-        vcOrder = [];
-        updateVcOrderUI();
-        document.getElementById('vcMessages').innerHTML = '';
-        botSpeak(vcStr('greet'));
-      }
-      startListening();
-    }
-
-    function resetVoiceChat() {
-      stopListening();
-      speechSynthesis.cancel();
-      vcState = 'idle';
-      vcOrder = [];
-      vcCurrentProduct = null;
-      updateVcOrderUI();
-      document.getElementById('vcMessages').innerHTML = '';
-      document.getElementById('vcLiveText').textContent = '';
-      document.getElementById('vcStatus').textContent = 'Click the mic to start talking';
-    }
-
-    //  Init 
+   try {
+    await fetch('/api/orders/manual', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({
+      phone: phone,
+      call_id: window._lastCallId || '',
+      products: products,
+      total: total,
+      language: 'en',
+     })
+    });
+    toast(' Order saved successfully!', 'success');
     loadStats();
-    loadOrders(); // Initial load
-    setInterval(loadStats, 10000); // Refresh stats every 10s
-    setInterval(loadOrders, 10000); // Refresh orders every 10s
-  </script>
+    loadOrders();
+    // Reset
+    manualQty.classic = 0; manualQty.premium = 0; manualQty.basic = 0;
+    document.getElementById('mq-classic').textContent = '0';
+    document.getElementById('mq-premium').textContent = '0';
+    document.getElementById('mq-basic').textContent = '0';
+    document.getElementById('manualTotal').textContent = '₹0';
+    document.getElementById('manualOrderBox').style.display = 'none';
+   } catch (e) {
+    toast('Failed to save order', 'error');
+   }
+  }
+
+  // Orders 
+  async function loadOrders() {
+   const body = document.getElementById('ordersBody');
+   body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
+   try {
+    const orders = await fetch('/api/orders').then(r =>r.json());
+    if (!orders.length) {
+     body.innerHTML = '<tr><td colspan="7"><div class="empty"><div class="empty-icon"></div>No orders yet. Make a call!</div></td></tr>';
+     return;
+    }
+    body.innerHTML = orders.map((o, i) =>`
+   <tr>
+    <td style="font-family:var(--mono);color:var(--muted)">#${o.id}</td>
+    <td style="font-family:var(--mono)">${o.phone}</td>
+    <td>
+     <div class="order-products">
+      ${(o.products || []).map(p =>`
+       <div class="op-item"><span>${p.name}</span>× ${p.quantity} — ₹${(p.price * p.quantity).toLocaleString('en-IN')}</div>
+      `).join('')}
+     </div>
+    </td>
+    <td style="font-family:var(--mono);color:var(--green)">₹${(o.total || 0).toLocaleString('en-IN')}</td>
+    <td><span class="lang-flag">${langFlag(o.language)}</span>${o.language}</td>
+    <td><span class="badge ${o.status}">${o.status}</span></td>
+    <td style="color:var(--muted);font-size:.76rem">${fmtDate(o.created_at)}</td>
+   </tr>
+  `).join('');
+   } catch (e) {
+    body.innerHTML = '<tr><td colspan="7" style="color:var(--red);padding:16px;">Failed to load orders</td></tr>';
+   }
+  }
+
+  // Calls 
+  async function loadCalls() {
+   const body = document.getElementById('callsBody');
+   body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">Loading...</td></tr>';
+   try {
+    const calls = await fetch('/api/calls').then(r =>r.json());
+    if (!calls.length) {
+     body.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon"></div>No calls yet</div></td></tr>';
+     return;
+    }
+    body.innerHTML = calls.map(c =>`
+   <tr>
+    <td style="font-family:var(--mono);color:var(--muted)">#${c.id}</td>
+    <td class="call-id">${c.call_id || '—'}</td>
+    <td style="font-family:var(--mono)">${c.phone}</td>
+    <td><span class="badge ${statusClass(c.status)}">${c.status}</span></td>
+    <td style="color:var(--muted);font-size:.76rem">${fmtDate(c.created_at)}</td>
+    <td>
+     ${c.call_id ? `<button class="btn btn-secondary" onclick="pollCallStatus('${c.call_id}')">↻ Status</button>` : '—'}
+    </td>
+   </tr>
+  `).join('');
+   } catch (e) {
+    body.innerHTML = '<tr><td colspan="6" style="color:var(--red);padding:16px;">Failed to load calls</td></tr>';
+   }
+  }
+
+  // Helpers 
+  function langFlag(lang) {
+   const m = { en: '', hi: '', kn: '', mr: '' };
+   return m[lang] || '';
+  }
+  function statusClass(s) {
+   if (!s) return 'pending';
+   if (s.includes('complet') || s.includes('end')) return 'confirmed';
+   if (s.includes('fail') || s.includes('error')) return 'failed';
+   return 'pending';
+  }
+  function fmtDate(d) {
+   if (!d) return '—';
+   try { return new Date(d).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' }); }
+   catch { return d; }
+  }
+
+  // Inbound 
+  async function setupInbound() {
+   const phone = document.getElementById('inboundNumber').value.trim();
+   if (!phone) { toast('Enter a Bland.ai inbound phone number', 'error'); return; }
+
+   const btn = document.getElementById('inboundBtn');
+   btn.disabled = true;
+   btn.innerHTML = '<span class="spin"></span>Setting up...';
+
+   const box = document.getElementById('inboundStatusBox');
+   const dot = document.getElementById('inboundDot');
+   const text = document.getElementById('inboundText');
+   box.className = 'call-status-box show';
+   dot.className = 'cstatus-dot';
+   text.textContent = 'Configuring inbound bot on Bland.ai...';
+
+   try {
+    const res = await fetch('/api/inbound/setup', {
+     method: 'POST',
+     headers: { 'Content-Type': 'application/json' },
+     body: JSON.stringify({ phone_number: phone })
+    });
+    const data = await res.json();
+
+    if (data.error) {
+     dot.className = 'cstatus-dot error';
+     text.textContent = 'Error: ' + data.error;
+     toast('Setup failed: ' + data.error, 'error');
+    } else {
+     dot.className = 'cstatus-dot done';
+     text.textContent = ' Inbound bot is now active!';
+     document.getElementById('inboundInfo').style.display = 'block';
+     document.getElementById('activeNumber').textContent = ' ' + phone;
+     toast('Inbound bot is live! Call ' + phone + ' to place orders.', 'success');
+    }
+   } catch (e) {
+    dot.className = 'cstatus-dot error';
+    text.textContent = 'Server error.';
+    toast('Server error', 'error');
+   }
+
+   btn.disabled = false;
+   btn.innerHTML = ' Setup Inbound Bot';
+  }
+
+  // Voice Chat Bot (100% Free — Web Speech API) 
+  const VC_PRODUCTS = {
+   classic: { name: 'Classic', price: 3999 },
+   premium: { name: 'Premium', price: 4499 },
+   basic: { name: 'Basic', price: 2999 },
+  };
+
+  const VC_STRINGS = {
+   en: {
+    greet: "Hello! Welcome to Automaton Crocs Store! I can help you place an order. We have three products: Classic at ₹3,999, Premium at ₹4,499, and Basic at ₹2,999. Which one would you like?",
+    askQty: "How many pairs of {product} would you like?",
+    addMore: "Got it! {qty} pairs of {product}. Would you like to add another product?",
+    confirm: "Your order summary: {items}. Total: ₹{total}. Shall I confirm this order?",
+    confirmed: "Your order has been placed successfully! Thank you for choosing Automaton Crocs!",
+    cancelled: "No problem! Feel free to order anytime. Goodbye!",
+    noProduct: "Sorry, I didn't catch that. Please say Classic, Premium, or Basic.",
+    noQty: "Please tell me a number, like 1, 2, or 3.",
+    yesNo: "Please say Yes to confirm or No to cancel.",
+   },
+   hi: {
+    greet: "Namaste! Automaton Crocs Store mein aapka swagat hai! Humare paas teen products hain: Classic ₹3,999, Premium ₹4,499, aur Basic ₹2,999. Aap kaun sa lena chahenge?",
+    askQty: "{product} ke kitne pairs chahiye?",
+    addMore: "Theek hai! {product} ke {qty} pairs. Kya aap aur kuch add karna chahenge?",
+    confirm: "Aapka order: {items}. Total: ₹{total}. Kya confirm karoon?",
+    confirmed: "Aapka order confirm ho gaya! Dhanyavaad!",
+    cancelled: "Koi baat nahi! Kabhi bhi order karein. Alvida!",
+    noProduct: "Maaf kijiye, mujhe samajh nahi aaya. Kripya Classic, Premium, ya Basic bolein.",
+    noQty: "Kripya ek number bataiye, jaise 1, 2, ya 3.",
+    yesNo: "Kripya Haan ya Nahi bolein.",
+   },
+   kn: {
+    greet: "Namaskara! Automaton Crocs Store ge swagatavagide! Namma balli mooru products ide: Classic ₹3,999, Premium ₹4,499, mattu Basic ₹2,999. Nimge yaavudu beku?",
+    askQty: "{product} estu pairs beku?",
+    addMore: "Sari! {product} {qty} pairs. Innenu beka?",
+    confirm: "Nimma order: {items}. Total: ₹{total}. Confirm maadabeka?",
+    confirmed: "Nimma order confirm aagide! Dhanyavaadagalu!",
+    cancelled: "Paravaagilla! Yavaaga beku adaaga order maadi. Hogi banni!",
+    noProduct: "Kshamisi, nanage arthaagalilla. Dayavittu Classic, Premium, athava Basic heli.",
+    noQty: "Dayavittu ondu sankhye heli, 1, 2, athava 3.",
+    yesNo: "Dayavittu Haudu athava Illa heli.",
+   },
+   mr: {
+    greet: "Namaskar! Automaton Crocs Store madhye tumche swagat aahe! Aamchyakade teen products aahet: Classic ₹3,999, Premium ₹4,499, ani Basic ₹2,999. Tumhala kaay pahije?",
+    askQty: "{product} che kiti pairs pahije?",
+    addMore: "Theek aahe! {product} che {qty} pairs. Aankhi kahitari add karayche aahe ka?",
+    confirm: "Tumcha order: {items}. Total: ₹{total}. Confirm karoo ka?",
+    confirmed: "Tumcha order confirm zala! Dhanyavaad!",
+    cancelled: "Kahi harkat nahi! Kevhahi order dya. Punha yaa!",
+    noProduct: "Maaf kara, mala samjale nahi. Krupya Classic, Premium, kinva Basic sanga.",
+    noQty: "Krupya ek number sanga, jase 1, 2, kinva 3.",
+    yesNo: "Krupya Ho kinva Nahi sanga.",
+   },
+  };
+
+  let vcState = 'idle'; // idle, ask_product, ask_qty, ask_more, confirm, done
+  let vcLang = 'en';
+  let vcAutoLang = true;
+  let vcOrder = []; // [{name, qty, price}]
+  let vcCurrentProduct = null;
+  let vcRecognition = null;
+  let vcListening = false;
+
+  function setVoiceLang(val) {
+   if (val === 'auto') { vcAutoLang = true; }
+   else { vcAutoLang = false; vcLang = val; }
+   document.getElementById('vcLangLabel').textContent = 'Language: ' + (val === 'auto' ? 'Auto-detect' : val.toUpperCase());
+  }
+
+  function vcStr(key) { return (VC_STRINGS[vcLang] || VC_STRINGS.en)[key] || VC_STRINGS.en[key]; }
+
+  function addVcMsg(text, from = 'bot') {
+   const el = document.getElementById('vcMessages');
+   const div = document.createElement('div');
+   div.style.cssText = from === 'bot'
+    ? 'background:var(--s3);border:1px solid var(--border);border-radius:12px 12px 12px 2px;padding:10px 14px;font-size:.85rem;max-width:85%;align-self:flex-start;'
+    : 'background:rgba(0,214,143,.1);border:1px solid rgba(0,214,143,.2);border-radius:12px 12px 2px 12px;padding:10px 14px;font-size:.85rem;max-width:85%;align-self:flex-end;color:var(--green2);';
+   div.textContent = (from === 'bot' ? ' ' : ' ') + text;
+   el.appendChild(div);
+   el.scrollTop = el.scrollHeight;
+  }
+
+  function botSpeak(text) {
+   addVcMsg(text, 'bot');
+   const utter = new SpeechSynthesisUtterance(text);
+   const langMap = { en: 'en-IN', hi: 'hi-IN', kn: 'kn-IN', mr: 'mr-IN' };
+   utter.lang = langMap[vcLang] || 'en-IN';
+   utter.rate = 0.95;
+   speechSynthesis.cancel();
+   speechSynthesis.speak(utter);
+  }
+
+  function detectLang(text) {
+   const t = text.toLowerCase();
+   if (/namaste|haan|nahi|chahiye|kitne|theek|karna/.test(t)) return 'hi';
+   if (/namaskara|haudu|illa|beku|estu|sari|heli/.test(t)) return 'kn';
+   if (/namaskar|ho|nahi|pahije|kiti|karay|sanga/.test(t)) return 'mr';
+   return 'en';
+  }
+
+  function matchProduct(text) {
+   const t = text.toLowerCase();
+   if (/classic/.test(t)) return 'classic';
+   if (/premium/.test(t)) return 'premium';
+   if (/basic/.test(t)) return 'basic';
+   if (/one|1|ek|ondu|first|pehla/.test(t)) return 'classic';
+   if (/two|2|do|eradu|second|dusra/.test(t)) return 'premium';
+   if (/three|3|teen|mooru|third|tisra/.test(t)) return 'basic';
+   return null;
+  }
+
+  function matchQty(text) {
+   const nums = {
+    one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+    ek: 1, do: 2, teen: 3, char: 4, paanch: 5, ondu: 1, eradu: 2, mooru: 3, nalku: 4, aidu: 5
+   };
+   const t = text.toLowerCase().trim();
+   for (const [word, num] of Object.entries(nums)) { if (t.includes(word)) return num; }
+   const m = t.match(/\d+/);
+   return m ? parseInt(m[0]) : null;
+  }
+
+  function matchYes(text) {
+   return /yes|haan|ha|ho|haudu|sari|theek|confirm|okay|ok|sure/i.test(text);
+  }
+  function matchNo(text) {
+   return /no|nahi|nako|illa|cancel|nope|stop/i.test(text);
+  }
+
+  function updateVcOrderUI() {
+   const el = document.getElementById('vcOrderItems');
+   if (!vcOrder.length) { el.innerHTML = '<div style="color:var(--muted);font-size:.82rem;text-align:center;padding:20px;">No items yet</div>'; }
+   else {
+    el.innerHTML = vcOrder.map(o =>`
+   <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:.85rem;">
+    <div><strong>${o.name}</strong>× ${o.qty}</div>
+    <div style="font-family:var(--mono);color:var(--green);">₹${(o.price * o.qty).toLocaleString('en-IN')}</div>
+   </div>
+  `).join('');
+   }
+   const total = vcOrder.reduce((s, o) =>s + o.price * o.qty, 0);
+   document.getElementById('vcTotal').textContent = '₹' + total.toLocaleString('en-IN');
+  }
+
+  function processVoiceInput(text) {
+   addVcMsg(text, 'user');
+
+   // Auto detect language on first message
+   if (vcAutoLang && vcState === 'ask_product') {
+    vcLang = detectLang(text);
+    document.getElementById('vcLangLabel').textContent = 'Language: ' + vcLang.toUpperCase();
+   }
+
+   switch (vcState) {
+    case 'ask_product': {
+     const p = matchProduct(text);
+     if (!p) { botSpeak(vcStr('noProduct')); return; }
+     vcCurrentProduct = p;
+     vcState = 'ask_qty';
+     botSpeak(vcStr('askQty').replace('{product}', VC_PRODUCTS[p].name));
+     break;
+    }
+    case 'ask_qty': {
+     const q = matchQty(text);
+     if (!q || q < 1 || q >100) { botSpeak(vcStr('noQty')); return; }
+     const prod = VC_PRODUCTS[vcCurrentProduct];
+     // Check if already in order, add qty
+     const existing = vcOrder.find(o =>o.name === prod.name);
+     if (existing) existing.qty += q;
+     else vcOrder.push({ name: prod.name, qty: q, price: prod.price });
+     updateVcOrderUI();
+     vcState = 'ask_more';
+     botSpeak(vcStr('addMore').replace('{product}', prod.name).replace('{qty}', q));
+     break;
+    }
+    case 'ask_more': {
+     if (matchYes(text)) {
+      vcState = 'ask_product';
+      botSpeak(vcStr('noProduct').replace('Sorry, I didn\'t catch that. ', ''));
+     } else if (matchNo(text)) {
+      vcState = 'confirm';
+      const items = vcOrder.map(o =>`${o.name} × ${o.qty}`).join(', ');
+      const total = vcOrder.reduce((s, o) =>s + o.price * o.qty, 0);
+      botSpeak(vcStr('confirm').replace('{items}', items).replace('{total}', total.toLocaleString('en-IN')));
+     } else {
+      // Maybe they said a product name directly
+      const p = matchProduct(text);
+      if (p) {
+       vcCurrentProduct = p;
+       vcState = 'ask_qty';
+       botSpeak(vcStr('askQty').replace('{product}', VC_PRODUCTS[p].name));
+      } else {
+       botSpeak(vcStr('yesNo'));
+      }
+     }
+     break;
+    }
+    case 'confirm': {
+     if (matchYes(text)) {
+      vcState = 'done';
+      botSpeak(vcStr('confirmed'));
+      // Save order to DB
+      const total = vcOrder.reduce((s, o) =>s + o.price * o.qty, 0);
+      fetch('/api/orders/manual', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({
+        phone: 'voice-chat',
+        products: vcOrder.map(o =>({ name: o.name, quantity: o.qty, price: o.price })),
+        total: total,
+        language: vcLang,
+       })
+      }).then(() =>{ loadStats(); loadOrders(); toast('Order saved to database!', 'success'); });
+      stopListening();
+     } else if (matchNo(text)) {
+      vcState = 'done';
+      botSpeak(vcStr('cancelled'));
+      stopListening();
+     } else {
+      botSpeak(vcStr('yesNo'));
+     }
+     break;
+    }
+    case 'done': {
+     botSpeak(vcStr('greet'));
+     vcState = 'ask_product';
+     vcOrder = [];
+     updateVcOrderUI();
+     break;
+    }
+   }
+  }
+
+  function startListening() {
+   if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    toast('Speech recognition not supported. Use Chrome!', 'error');
+    return;
+   }
+   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+   vcRecognition = new SR();
+   const langMap = { en: 'en-IN', hi: 'hi-IN', kn: 'kn-IN', mr: 'mr-IN' };
+   vcRecognition.lang = langMap[vcLang] || 'en-IN';
+   vcRecognition.continuous = true;
+   vcRecognition.interimResults = true;
+
+   vcRecognition.onresult = (e) =>{
+    let final = '';
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+     if (e.results[i].isFinal) final += e.results[i][0].transcript;
+     else interim += e.results[i][0].transcript;
+    }
+    document.getElementById('vcLiveText').textContent = interim || '';
+    if (final) {
+     document.getElementById('vcLiveText').textContent = '';
+     processVoiceInput(final.trim());
+    }
+   };
+
+   vcRecognition.onerror = (e) =>{
+    if (e.error !== 'no-speech') {
+     document.getElementById('vcStatus').textContent = 'Mic error: ' + e.error;
+    }
+   };
+
+   vcRecognition.onend = () =>{
+    if (vcListening && vcState !== 'done') {
+     const langMap = { en: 'en-IN', hi: 'hi-IN', kn: 'kn-IN', mr: 'mr-IN' };
+     vcRecognition.lang = langMap[vcLang] || 'en-IN';
+     vcRecognition.start();
+    }
+   };
+
+   vcRecognition.start();
+   vcListening = true;
+   document.getElementById('vcMicBtn').style.background = 'linear-gradient(135deg,#ff5757,#cc3333)';
+   document.getElementById('vcMicBtn').textContent = '';
+   document.getElementById('vcStatus').textContent = ' Listening... speak now!';
+  }
+
+  function stopListening() {
+   vcListening = false;
+   if (vcRecognition) { vcRecognition.stop(); vcRecognition = null; }
+   document.getElementById('vcMicBtn').style.background = 'linear-gradient(135deg,var(--green),#00b87a)';
+   document.getElementById('vcMicBtn').textContent = '';
+   document.getElementById('vcStatus').textContent = 'Click the mic to start talking';
+   document.getElementById('vcLiveText').textContent = '';
+  }
+
+  function toggleVoiceChat() {
+   if (vcListening) { stopListening(); return; }
+   if (vcState === 'idle' || vcState === 'done') {
+    vcState = 'ask_product';
+    vcOrder = [];
+    updateVcOrderUI();
+    document.getElementById('vcMessages').innerHTML = '';
+    botSpeak(vcStr('greet'));
+   }
+   startListening();
+  }
+
+  function resetVoiceChat() {
+   stopListening();
+   speechSynthesis.cancel();
+   vcState = 'idle';
+   vcOrder = [];
+   vcCurrentProduct = null;
+   updateVcOrderUI();
+   document.getElementById('vcMessages').innerHTML = '';
+   document.getElementById('vcLiveText').textContent = '';
+   document.getElementById('vcStatus').textContent = 'Click the mic to start talking';
+  }
+
+  // Init 
+  loadStats();
+  loadOrders(); // Initial load
+  setInterval(loadStats, 10000); // Refresh stats every 10s
+  setInterval(loadOrders, 10000); // Refresh orders every 10s
+ </script>
 </body>
 
 </html>
